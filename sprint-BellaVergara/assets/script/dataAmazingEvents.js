@@ -1,4 +1,4 @@
-events : [
+const events = [
     {
       "_id": 1,
       "image":"food_fair.jpg",

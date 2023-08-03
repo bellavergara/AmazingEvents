@@ -32,5 +32,39 @@ function mostrarTarjetas(listaDeEventos, contenedorDeEventos){
   */
   for (const evento of listaDeEventos) {
     let nuevaTarjeta = crearTarjeta(evento)
+    contenedorDeEventos.innerHTML += nuevaTarjeta
   }
+}
+
+
+/// funciones para filtlrar enventos
+
+function filtrarEventosPorNombre(listaDeEventos, nombreEvento) {
+  let eventosFiltrados
+  for (const evento of listaDeEventos) {
+    if(evento.name == nombreEvento) {
+      eventosFiltrados.push(evento)
+    }
+  }
+  return eventosFiltrados
+}
+
+function filtrarEventosPorCategoria(listaDeEventos, categoria) {
+  let eventosFiltrados
+  for (const evento of listaDeEventos) {
+    if(evento.category == categoria) {
+      eventosFiltrados.push(evento)
+    }
+  }
+  return eventosFiltrados
+}
+
+function filtrarEventosPorLugar(listaDeEventos, lugar) {
+  let eventosFiltrados
+  for (const evento of listaDeEventos) {
+    if(evento.place == lugar) {
+      eventosFiltrados.push(evento)
+    }
+  }
+  return eventosFiltrados
 }
