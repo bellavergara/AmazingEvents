@@ -48,6 +48,18 @@ footer {
   min-height: 8vh;
 }
 
+table th,tr,td{
+  height: 2rem; 
+}
+.th-events{
+  background-color: #ff006e !important;
+}
+.th-upcoming{
+  background-color: #ff006e !important;
+}
+.th-past{
+  background-color: #ff006e !important;
+}
 /*este es upcoming events */
 
 /* aca comienza responsive 
