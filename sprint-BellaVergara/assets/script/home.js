@@ -60,8 +60,5 @@ contenedorCheck.addEventListener("change", () => {
     .map(checkbox => checkbox.value)
 
   //Paso2: ahora filtramos por check//
-  eventos.filter()
-
-
-
+  eventos.filter(() => { })
 })
