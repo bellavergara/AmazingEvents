@@ -1,8 +1,10 @@
-const contenedorTarjetas = document.getElementById('cards-contenedor');
-const eventos = data.events;
+const arrayDeEventos = data.events;
 const contenedorCheck = document.getElementById("ckeckbox");
+const inputBuscador = document.getElementById("input-buscar");
+const botonBuscar = document.getElementById("boton-buscar");
 
-function mostrarTarjetas(listaDeEventos, contenedorDeEventos) {
+function fnMostrarTarjetas(listaDeEventos) {
+  const contenedorTarjetas = document.getElementById('cards-contenedor');
   /*
     Esta función recibe la lista de eventos del archivo "dataAmazingEvents.js"
     Crea UNA tarjeta por CADA evento
@@ -10,7 +12,7 @@ function mostrarTarjetas(listaDeEventos, contenedorDeEventos) {
   */
   let card = "";
   for (const evento of listaDeEventos) {
-    card += `<div class="card" style="width: 18rem">
+    card += `<div id="tarjeta-event" class="card" style="width: 18rem">
     <img
       src="${evento.image}"
       class="card-img-top"
@@ -26,39 +28,90 @@ function mostrarTarjetas(listaDeEventos, contenedorDeEventos) {
     </div>
   </div>`
   }
-  contenedorDeEventos.innerHTML = card;
+  contenedorTarjetas.innerHTML = card;
 }
-mostrarTarjetas(eventos, contenedorTarjetas);
+fnMostrarTarjetas(arrayDeEventos);
 
-const arrayCategoria = eventos.map(evento => evento.category)
+const arrayCategoria = arrayDeEventos.map(evento => evento.category)
 let set = new Set(arrayCategoria)
 let arrayCategoriaSinRepetir = Array.from(set)
 
 
-function crearCkeckbox(listaCategoria, contenedorCkeckbox) {
+function fnCrearCkeckbox(listaCategoria, contenedorCkeckbox) {
   let estructurasCkeckbox = "";
 
   for (const categoria of listaCategoria) {
     estructurasCkeckbox += `
   <div class="checkbox-individual">
             <label for="${categoria}">${categoria}</label>
-            <input type="checkbox" name="" id="${categoria}" value="${categoria} "/>
+            <input type="checkbox" name="" id="${categoria}" value="${categoria}"/>
           </div>`
     contenedorCkeckbox.innerHTML = estructurasCkeckbox;
   }
 }
 
-crearCkeckbox(arrayCategoriaSinRepetir, contenedorCheck)
+fnCrearCkeckbox(arrayCategoriaSinRepetir, contenedorCheck)
 
 
 contenedorCheck.addEventListener("change", () => {
-  //Paso 1:  mirar cual checkbox de categoria cliclearon
-  const checked = document.querySelectorAll("input[type=checkbox]:checked")
+  //Paso 1: mirar cual checkbox de categoria cliclearon
+  const checkboxesCheckeados = document.querySelectorAll("input[type=checkbox]:checked")
 
   // este array se crea desde 0 cada vez que el usuario hace click
-  const arrayDeChecked = Array.from(checked)
-    .map(checkbox => checkbox.value)
+  const arrayCategoriasCheckeadas = Array.from(checkboxesCheckeados)
+    .map(categoriaDelCheckbox => categoriaDelCheckbox.value)
 
   //Paso2: ahora filtramos por check//
-  eventos.filter(() => { })
+  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, arrayCategoriasCheckeadas)
+
+  //Paso 3: Limpiar el home, eliminar todas las tarjetas para luego mostrar solo las filtradas //
+  fnEliminarTarjetas()
+
+  //Paso 4: muestro los eventos ya filtrados //
+  fnMostrarTarjetas(tarjetasFiltradas)
+})
+
+
+
+/// Declaro mis Funciones
+
+function fnFiltrarEventos(arrEventos, arrCategoriasLimpio) {
+  let filltroFinal = []
+
+  for (const categoria of arrCategoriasLimpio) {
+    const filtro = arrEventos
+      .filter(evento => evento.category.trim().toLowerCase() === categoria.trim().toLowerCase())
+
+    filltroFinal = filltroFinal.concat(filtro)
+  }
+
+  return filltroFinal
+}
+
+// funcion eliminar tarjetas//
+
+function fnEliminarTarjetas() {
+  const tarjetasDeEventos = document.querySelectorAll('#tarjeta-event')
+  for (const tarjeta of tarjetasDeEventos) {
+    tarjeta.remove()
+  }
+}
+
+// boton buscador//
+
+botonBuscar.addEventListener("click", () => {
+  // obtengo el input buscador //
+  const inputBuscador = document.getElementById("input-buscar")
+
+  // guardo el texto del input buscador en un array //
+  arrayBusqueda = [inputBuscador.value]
+
+  // limio el home, elimino todas las tarjetas //
+  fnEliminarTarjetas()
+
+  // filtro por el texto del input buscador //
+  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, arrayBusqueda)
+
+  // muestro las tarjetas filtradas //
+  fnMostrarTarjetas(tarjetasFiltradas)
 })
