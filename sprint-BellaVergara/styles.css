@@ -31,6 +31,10 @@ main {
   object-fit: cover;
 }
 
+#carouselExampleCaptions.carousel {
+  max-width: 100%;
+  overflow: hidden;
+}
 .checkbox-individual {
   display: flex;
   justify-content: center;

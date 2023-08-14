@@ -2,6 +2,7 @@ const arrayDeEventos = data.events;
 const contenedorCheck = document.getElementById("ckeckbox");
 const inputBuscador = document.getElementById("input-buscar");
 const botonBuscar = document.getElementById("boton-buscar");
+const mensajeError = document.getElementById("contenedor-mensaje-error");
 
 function fnMostrarTarjetas(listaDeEventos) {
   const contenedorTarjetas = document.getElementById('cards-contenedor');
@@ -54,38 +55,48 @@ fnCrearCkeckbox(arrayCategoriaSinRepetir, contenedorCheck)
 
 
 contenedorCheck.addEventListener("change", () => {
-  //Paso 1: mirar cual checkbox de categoria cliclearon
-  const checkboxesCheckeados = document.querySelectorAll("input[type=checkbox]:checked")
-
-  // este array se crea desde 0 cada vez que el usuario hace click
-  const arrayCategoriasCheckeadas = Array.from(checkboxesCheckeados)
-    .map(categoriaDelCheckbox => categoriaDelCheckbox.value)
-
+  eliminarMensajeError()
   //Paso2: ahora filtramos por check//
-  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, arrayCategoriasCheckeadas)
+  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, inputBuscador.value)
+  tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas);
 
   //Paso 3: Limpiar el home, eliminar todas las tarjetas para luego mostrar solo las filtradas //
   fnEliminarTarjetas()
 
   //Paso 4: muestro los eventos ya filtrados //
-  fnMostrarTarjetas(tarjetasFiltradas)
+  if (tarjetasFiltradas.length === 0) {
+    crearMensajeError()
+  }
+  else {
+    fnMostrarTarjetas(tarjetasFiltradas)
+  }
 })
 
+
+function filtroPorCheck(arrayFiltradoEvent) {
+  //filtrado array de checkbox//
+  const checkboxesCheckeados = document.querySelectorAll("input[type=checkbox]:checked")
+  const arrayCategoriasCheckeadas = Array.from(checkboxesCheckeados)
+    .map(categoriaDelCheckbox => categoriaDelCheckbox.value.toLowerCase())
+  if (arrayCategoriasCheckeadas.length === 0) {
+    return arrayFiltradoEvent
+  }
+  return arrayFiltradoEvent.filter(evento => arrayCategoriasCheckeadas.includes(evento.category.toLowerCase()))
+
+}
 
 
 /// Declaro mis Funciones
 
-function fnFiltrarEventos(arrEventos, arrCategoriasLimpio) {
-  let filltroFinal = []
+function fnFiltrarEventos(arrEventos, valorInputUsuario) {
 
-  for (const categoria of arrCategoriasLimpio) {
-    const filtro = arrEventos
-      .filter(evento => evento.category.trim().toLowerCase() === categoria.trim().toLowerCase())
-
-    filltroFinal = filltroFinal.concat(filtro)
+  const filtro = arrEventos
+    .filter(evento => evento.name.trim().toLowerCase().includes(valorInputUsuario.trim().toLowerCase()))
+  //filter devuelve un array, con lo que cumplan la condicion. 
+  if (valorInputUsuario.value === 0) {
+    return arrayDeEventos
   }
-
-  return filltroFinal
+  return filtro
 }
 
 // funcion eliminar tarjetas//
@@ -96,22 +107,39 @@ function fnEliminarTarjetas() {
     tarjeta.remove()
   }
 }
-
 // boton buscador//
 
 botonBuscar.addEventListener("click", () => {
-  // obtengo el input buscador //
-  const inputBuscador = document.getElementById("input-buscar")
 
-  // guardo el texto del input buscador en un array //
-  arrayBusqueda = [inputBuscador.value]
-
+  eliminarMensajeError()
   // limio el home, elimino todas las tarjetas //
   fnEliminarTarjetas()
 
   // filtro por el texto del input buscador //
-  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, arrayBusqueda)
-
-  // muestro las tarjetas filtradas //
-  fnMostrarTarjetas(tarjetasFiltradas)
+  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, inputBuscador.value)
+  tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas);
+  if (tarjetasFiltradas.length === 0) {
+    crearMensajeError()
+  }
+  else {
+    fnMostrarTarjetas(tarjetasFiltradas)
+  }
 })
+//mostramos mensaje si no coincide la busqueda//
+
+
+
+function crearMensajeError() {
+  mensajeError.innerHTML = `<div class="card" style="width: 18rem;">
+  <img src="./assets/script/mensajeError/img-error.avif" class="card-img-top" alt="...">
+  <div class="card-body">
+  <h1> Error!</h1>
+    <p class="card-text">"We're sorry, there are no results for your search parameters."</p>
+    <p class = "card-text">Please try again later.</p>
+  </div>
+</div>`
+}
+
+function eliminarMensajeError() {
+  mensajeError.innerHTML = ""
+}
