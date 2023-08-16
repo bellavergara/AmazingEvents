@@ -1,8 +1,29 @@
-const eventos = data.events;
+
 const contenedorCheck = document.getElementById("ckeckbox");
 const inputBuscador = document.getElementById("input-buscar");
 const botonBuscar = document.getElementById("boton-buscar");
 const mensajeError = document.getElementById("contenedor-mensaje-error");
+
+// fetch//
+
+fetch("https://mindhub-xj03.onrender.com/api/amazing")
+  .then(respuesta => respuesta.json())
+  .then(respuesta => {
+    const datosFiltrados = respuesta;       //  contiene el array con los eventos //
+    const listaDeEventos = datosFiltrados.events
+    console.log(listaDeEventos);
+    console.log(datosFiltrados);
+
+    filtradoDato(listaTarjeta)
+  })
+  .catch(error => console.log(error))
+
+fnMostrarTarjetas(listaDeEventos)
+
+
+
+
+
 
 function filtradoDato(listaTarjeta) {
   let datosFiltrados = [];

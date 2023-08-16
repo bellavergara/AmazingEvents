@@ -1,14 +1,27 @@
-const eventos = data.events;
+
 const parametros = location.search
 
 new URLSearchParams(parametros)
 const objetoURL = (new URLSearchParams(parametros))
-const nombreEventos = objetoURL.get("nombre");
-
-
-const objetoEvento = eventos.find(objetoEvento => objetoEvento.name === nombreEventos);
-
+const nombreEvento = objetoURL.get("nombre");
 const contenedorCard = document.getElementById("contenedorCard");
+
+//uso de fetch //
+
+fetch("https://mindhub-xj03.onrender.com/api/amazing")
+    .then(respuesta => respuesta.json())
+    .then(respuesta => {
+        const arrayEventos = respuesta;       //  contiene el array con los eventos //
+        const listaDeEventos = arrayEventos.events
+        const objetoEvento = listaDeEventos.find(objetoEvento => objetoEvento.name === nombreEvento);
+        console.log(listaDeEventos);
+        console.log(arrayEventos);
+        const cuerpoString = creadCard(objetoEvento);
+        reutilizarCard(contenedorCard, cuerpoString)
+    })
+    .catch(error => console.log(error))
+
+
 
 function creadCard(evento) {
     return `
@@ -21,22 +34,24 @@ function creadCard(evento) {
             <div id="detailCard" class="card-body d-flex flex-column justify-content-center gap-4">
                 <h2 class="card-title fw-bold display-5">${evento.name}</h2>
                 <ul class="d-flex flex-column gap-3">
-                    <li>${evento.date}</li>
-                    <li class="card-text">${evento.description}
-                    </li>
-                    </li>
-                    ${evento.category}
                     <li>
-                        ${evento.place}
+                    <p>Date:${evento.date}  </p>
                     </li>
+                    <li class="card-text">
+                     <p> description: ${evento.description} </p> 
+                     </li>
+                     <p> Category: ${evento.category} </p>
                     <li>
-                        ${evento.capacity}
-                    </li>
-                    <li>
-                    ${evento.estimate}
+                     <p>Place: ${evento.place}</p>
                     </li>
                     <li>
-                        ${evento.price}
+                     <p> Capacity:  ${evento.capacity}</p>
+                    </li>
+                    <li>
+                    <p>Estimate: ${evento.estimate} </p>
+                    </li>
+                    <li>
+                    <p>Price: ${evento.price} </p>
                     </li>
                 </ul>
             </div>
@@ -46,9 +61,6 @@ function creadCard(evento) {
 `
 }
 
-const cuerpoString = creadCard(objetoEvento);
-
 function reutilizarCard(contenedorCard, string) {
     contenedorCard.innerHTML = string
 }
-reutilizarCard(contenedorCard, cuerpoString)

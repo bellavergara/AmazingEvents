@@ -1,41 +1,67 @@
-const arrayDeEventos = data.events;
+import { fnMostrarTarjetas, } from "../../module/functions.js"
 const contenedorCheck = document.getElementById("ckeckbox");
 const inputBuscador = document.getElementById("input-buscar");
 const botonBuscar = document.getElementById("boton-buscar");
 const mensajeError = document.getElementById("contenedor-mensaje-error");
 
-function fnMostrarTarjetas(listaDeEventos) {
-  const contenedorTarjetas = document.getElementById('cards-contenedor');
-  /*
-    Esta función recibe la lista de eventos del archivo "dataAmazingEvents.js"
-    Crea UNA tarjeta por CADA evento
-    Y agrega las tarjetas con los datos de los eventos al contenedor padre
-  */
-  let card = "";
-  for (const evento of listaDeEventos) {
-    card += `<div id="tarjeta-event" class="card" style="width: 18rem">
-    <img
-      src="${evento.image}"
-      class="card-img-top"
-      alt=".."
-    />
-    <div class="card-body d-flex flex-column justify-content-between">
-      <h5 class="card-title">${evento.name}</h5>
-      <p crlass="card-text">${evento.description}</p>
-      <div class="d-flex justify-content-between">
-        <p>$${evento.price}</p>
-        <a href="./details.html?nombre=${evento.name}" class="btn btn-primary">details</a>
-      </div>
-    </div>
-  </div>`
-  }
-  contenedorTarjetas.innerHTML = card;
-}
-fnMostrarTarjetas(arrayDeEventos);
+// fetch//
 
-const arrayCategoria = arrayDeEventos.map(evento => evento.category)
-let set = new Set(arrayCategoria)
-let arrayCategoriaSinRepetir = Array.from(set)
+fetch("https://mindhub-xj03.onrender.com/api/amazing")
+  .then(respuesta => respuesta.json())
+  .then(respuesta => {
+    const arrayEventos = respuesta;
+    const listaDeEventos = arrayEventos.events
+    const arrayCategoria = listaDeEventos.map(evento => evento.category)
+    let set = new Set(arrayCategoria)
+    let arrayCategoriaSinRepetir = Array.from(set)
+    console.log(arrayCategoriaSinRepetir)
+
+
+    console.log(listaDeEventos);
+    console.log(arrayEventos);
+
+    fnMostrarTarjetas(listaDeEventos)
+    fnCrearCkeckbox(arrayCategoriaSinRepetir, contenedorCheck)
+    fnFiltrarEventos(arrayCategoriaSinRepetir, inputBuscador.value)
+
+
+    contenedorCheck.addEventListener("change", () => {
+      eliminarMensajeError()
+      //Paso2: ahora filtramos por check//
+      let tarjetasFiltradas = fnFiltrarEventos(arrayCategoriaSinRepetir, inputBuscador.value)
+      tarjetasFiltradas = filtroPorCheck(arrayCategoriaSinRepetir);
+
+      //Paso 3: Limpiar el home, eliminar todas las tarjetas para luego mostrar solo las filtradas //
+      fnEliminarTarjetas()
+
+      //Paso 4: muestro los eventos ya filtrados //
+      if (tarjetasFiltradas.length === 0) {
+        crearMensajeError()
+      }
+      else {
+        fnMostrarTarjetas(tarjetasFiltradas)
+      }
+    })
+    botonBuscar.addEventListener("click", () => {
+
+      eliminarMensajeError()
+      // limio el home, elimino todas las tarjetas //
+      fnEliminarTarjetas()
+
+      // filtro por el texto del input buscador //
+      let tarjetasFiltradas = fnFiltrarEventos(arrayCategoriaSinRepetir, inputBuscador.value)
+      tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas);
+      if (tarjetasFiltradas.length === 0) {
+        crearMensajeError()
+      }
+      else {
+        fnMostrarTarjetas(tarjetasFiltradas)
+      }
+    })
+
+
+  })
+  .catch(error => console.log(error))
 
 
 function fnCrearCkeckbox(listaCategoria, contenedorCkeckbox) {
@@ -51,31 +77,10 @@ function fnCrearCkeckbox(listaCategoria, contenedorCkeckbox) {
   }
 }
 
-fnCrearCkeckbox(arrayCategoriaSinRepetir, contenedorCheck)
-
-
-contenedorCheck.addEventListener("change", () => {
-  eliminarMensajeError()
-  //Paso2: ahora filtramos por check//
-  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, inputBuscador.value)
-  tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas);
-
-  //Paso 3: Limpiar el home, eliminar todas las tarjetas para luego mostrar solo las filtradas //
-  fnEliminarTarjetas()
-
-  //Paso 4: muestro los eventos ya filtrados //
-  if (tarjetasFiltradas.length === 0) {
-    crearMensajeError()
-  }
-  else {
-    fnMostrarTarjetas(tarjetasFiltradas)
-  }
-})
-
-
 function filtroPorCheck(arrayFiltradoEvent) {
   //filtrado array de checkbox//
   const checkboxesCheckeados = document.querySelectorAll("input[type=checkbox]:checked")
+  console.log(checkboxesCheckeados)
   const arrayCategoriasCheckeadas = Array.from(checkboxesCheckeados)
     .map(categoriaDelCheckbox => categoriaDelCheckbox.value.toLowerCase())
   if (arrayCategoriasCheckeadas.length === 0) {
@@ -108,26 +113,6 @@ function fnEliminarTarjetas() {
   }
 }
 // boton buscador//
-
-botonBuscar.addEventListener("click", () => {
-
-  eliminarMensajeError()
-  // limio el home, elimino todas las tarjetas //
-  fnEliminarTarjetas()
-
-  // filtro por el texto del input buscador //
-  let tarjetasFiltradas = fnFiltrarEventos(arrayDeEventos, inputBuscador.value)
-  tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas);
-  if (tarjetasFiltradas.length === 0) {
-    crearMensajeError()
-  }
-  else {
-    fnMostrarTarjetas(tarjetasFiltradas)
-  }
-})
-//mostramos mensaje si no coincide la busqueda//
-
-
 
 function crearMensajeError() {
   mensajeError.innerHTML = `<div class="card" style="width: 18rem;">
