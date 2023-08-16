@@ -110,3 +110,14 @@ export function filtradoEventosUpcoming(listaTarjetas, fecha) {
   }
   return datosFiltrados
 }
+
+//past Events//
+export function filtradoEventosPast(listaTarjeta, fecha) {
+  let datosFiltrados = [];
+  for (const tarjeta of listaTarjeta) {
+    if (tarjeta.date < fecha) {
+      datosFiltrados.push(tarjeta)
+    }
+  }
+  return datosFiltrados
+}
