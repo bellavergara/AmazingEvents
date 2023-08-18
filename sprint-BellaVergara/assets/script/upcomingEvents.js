@@ -11,7 +11,6 @@ const botonBuscar = document.getElementById("boton-buscar");
 const mensajeError = document.getElementById("contenedor-mensaje-error");
 
 // fetch//
-
 fetch("https://mindhub-xj03.onrender.com/api/amazing")
   .then(respuesta => respuesta.json())
   .then(respuesta => {
@@ -39,4 +38,3 @@ fetch("https://mindhub-xj03.onrender.com/api/amazing")
     })
   })
   .catch(error => console.log(error))
-

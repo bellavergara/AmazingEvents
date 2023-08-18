@@ -10,14 +10,12 @@ const contenedorCheck = document.getElementById("ckeckbox");
 const botonBuscar = document.getElementById("boton-buscar");
 const mensajeError = document.getElementById("contenedor-mensaje-error")
 
-
 fetch("https://mindhub-xj03.onrender.com/api/amazing")
   .then(respuesta => respuesta.json())
   .then(respuesta => {
     const listaDeEventos = respuesta.events
     const fecha = respuesta.currentDate
     const datosFiltrados = filtradoEventosPast(listaDeEventos, fecha)
-
     const arrayCategoria = datosFiltrados.map(evento => evento.category)
     let set = new Set(arrayCategoria)
     let arrayCategoriaSinRepetir = Array.from(set)

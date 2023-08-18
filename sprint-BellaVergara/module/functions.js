@@ -1,7 +1,7 @@
 export function fnMostrarTarjetas(listaDeEventos) {
   const contenedorTarjetas = document.getElementById('cards-contenedor');
   /*
-    Esta función recibe la lista de eventos del archivo "dataAmazingEvents.js"
+    Esta función recibe la lista de eventos del API
     Crea UNA tarjeta por CADA evento
     Y agrega las tarjetas con los datos de los eventos al contenedor padre
   */
@@ -27,6 +27,7 @@ export function fnMostrarTarjetas(listaDeEventos) {
 }
 
 export function fnCrearCkeckbox(listaCategoria, contenedorCkeckbox) {
+  //fnCrearCkeckbox CREA CHECKBOX //
   let estructurasCkeckbox = "";
 
   for (const categoria of listaCategoria) {
@@ -40,25 +41,31 @@ export function fnCrearCkeckbox(listaCategoria, contenedorCkeckbox) {
 }
 
 export function filtroPorCheck(arrayFiltradoEvent) {
-  //filtrado array de checkbox//
+  //FILTRA tarjetas por checkbox//
   const checkboxesCheckeados = document.querySelectorAll("input[type=checkbox]:checked")
   const arrayCategoriasCheckeadas = Array.from(checkboxesCheckeados)
     .map(categoriaDelCheckbox => categoriaDelCheckbox.value.toLowerCase())
 
+  // condicional SI ningun check fue seleccionado, entonces NO filtra //
   if (arrayCategoriasCheckeadas.length === 0) {
     return arrayFiltradoEvent
+  } else {
+    // si  al menos hay un check seleccionado, entonces SI filtra//
+    return arrayFiltradoEvent.filter(evento => arrayCategoriasCheckeadas.includes(evento.category.toLowerCase()))
   }
-  return arrayFiltradoEvent.filter(evento => arrayCategoriasCheckeadas.includes(evento.category.toLowerCase()))
 }
 
-export function fnFiltrarEventos(arrEventos) {
+export function fnFiltrarEventosPorInput(arrEventos) {
+  // guardo el valor que esta escrito en el INPUT de busqueda
   const inputBuscador = document.getElementById("input-buscar")
   const valorInputUsuario = inputBuscador.value
 
+  // SI  el INPUT esta vacio, entonces NO  filtra//
   if (valorInputUsuario.length === 0) {
     return arrEventos
   }
   else {
+    // si no esta vacio el INPUT,entonces SI filtro//
     const filtro = arrEventos
       .filter(evento => evento.name.trim().toLowerCase().includes(valorInputUsuario.trim().toLowerCase()))
 
@@ -89,19 +96,23 @@ export function eliminarMensajeError(contenedorMensajeError) {
 }
 
 export function filtraTodaLaPagina(listaDeEventos, mensajeError) {
-  let tarjetasFiltradas = fnFiltrarEventos(listaDeEventos)
+  //guardo  el resultado de filtrar LOS EVENTOS por INPUT//
+  let tarjetasFiltradas = fnFiltrarEventosPorInput(listaDeEventos)
+  // gaurdo el resultado de filtrar eventos por CHECK//
   tarjetasFiltradas = filtroPorCheck(tarjetasFiltradas)
-
+  // SI no coincide la busqueda, crea un MENSAJE DE ERROR//
   if (tarjetasFiltradas.length === 0) {
     crearMensajeError(mensajeError)
   }
   else {
+    // muestro las tarjetas QUE si coincidieron con la busqueda//
     fnMostrarTarjetas(tarjetasFiltradas)
   }
 }
 // funciones de upcoming Events//
 
 export function filtradoEventosUpcoming(listaTarjetas, fecha) {
+  // filtra los eventos por fecha FUTURAS  A LA ACTUAL//
   let datosFiltrados = [];
   for (const tarjeta of listaTarjetas) {
     if (tarjeta.date > fecha) {
@@ -113,6 +124,7 @@ export function filtradoEventosUpcoming(listaTarjetas, fecha) {
 
 //past Events//
 export function filtradoEventosPast(listaTarjeta, fecha) {
+  //filtra eventos por FECHAS PASADAS//
   let datosFiltrados = [];
   for (const tarjeta of listaTarjeta) {
     if (tarjeta.date < fecha) {
