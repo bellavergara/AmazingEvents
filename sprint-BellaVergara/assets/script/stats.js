@@ -150,7 +150,7 @@ function calcularRevenueYAsistenciaUpcoming(categorias, eventos) {
             estimadoTotal += evento.estimate
             capacidadTotal += evento.capacity
         }
-
+        revenueTotal *= estimadoTotal
         let asistenciaTotal = (estimadoTotal * 100) / capacidadTotal
         estructuraTbodyTabla(contenedorTablaUpcoming, categoria, revenueTotal, asistenciaTotal)
     }
@@ -173,7 +173,7 @@ function calcularRevenueYAsistenciaPast(categorias, eventos) {
             asistenciaTotal += evento.assistance
             capacidadTotal += evento.capacity
         }
-
+        revenueTotal *= asistenciaTotal
         let porcentajeDeAsistenciaTotal = (asistenciaTotal * 100) / capacidadTotal
         estructuraTbodyTabla(contenedorTablaPast, categoria, revenueTotal, porcentajeDeAsistenciaTotal)
     }
